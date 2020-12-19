@@ -1,0 +1,102 @@
+import pandas as pd
+from datetime import datetime
+import numpy as np
+import os
+from matplotlib import ticker
+import matplotlib.pyplot as plt
+from matplotlib import style
+import matplotlib.dates as mdates
+df0 = pd.read_csv(
+    'USAExport.csv',
+    index_col=0,
+    encoding='utf-8')  # csv to dataframe
+df0 = df0.sort_values(by='Year')
+df0 = df0.set_index('Year')  # 将date设置为index
+df1 = pd.read_csv(
+    'USAImport.csv',
+    index_col=0,
+    encoding='utf-8')  # csv to dataframe
+df1 = df1.sort_values(by='Year')
+df1 = df1.set_index('Year')  # 将date设置为index
+df2 = pd.read_csv(
+    'Japan_Export.csv',
+    index_col=0,
+    encoding='utf-8')  # csv to dataframe
+df2 = df2.sort_values(by='Year')
+df2 = df2.set_index('Year')  # 将date设置为index
+df3 = pd.read_csv(
+    'Japan_Import.csv',
+    index_col=0,
+    encoding='utf-8')  # csv to dataframe
+df3 = df3.sort_values(by='Year')
+df3 = df3.set_index('Year')  # 将date设置为index
+print(df0)
+print(df1)
+#  绘图
+style.use('ggplot')
+plt.figure()  # 创建画布
+ax1 = plt.subplot2grid((4, 4), (0, 0), colspan=4, rowspan=2)
+ax2 = plt.subplot2grid((4, 4), (2, 0), colspan=4, rowspan=2)
+
+
+def draw(ax, DF, titel, label, data, la, co1, co2):
+    ax.set_title(titel)  # 标题描述
+    ax.set_xlabel(label)  # 横坐标描述
+    ax.set_ylabel('Trade_Value_(US$)', color=co1)  # 纵坐标描述
+    ax.plot(
+        DF.index,
+        DF[data],
+        label=la,
+        color=co2)
+    ax.legend()  # 图例
+
+
+draw(
+    ax1,
+    df0,
+    'USA_Import_and_Export',
+    'Year',
+    'Trade_Value_(US$)',
+    'USAExport',
+    'r',
+    'r')
+draw(
+    ax1,
+    df1,
+    'USA_Import_and_Export',
+    'Year',
+    'Trade_Value_(US$)',
+    'USAImport',
+    'green',
+    'b')
+draw(
+    ax2,
+    df2,
+    'Japan_Import_and_Export',
+    'Year',
+    'Trade_Value_(US$)',
+    'JapanExport',
+    'r',
+    'r')
+draw(
+    ax2,
+    df3,
+    'Japan_Import_and_Export',
+    'Year',
+    'Trade_Value_(US$)',
+    'JapanImport',
+    'green',
+    'b')
+
+
+def editx(ax):
+    for label in ax.get_xticklabels():
+        label.set_rotation(45)  # 旋转45度
+        label.set_horizontalalignment('right')  # 向右旋转
+        ax.xaxis.set_major_locator(mdates.DayLocator())
+
+
+editx(ax1)
+editx(ax2)
+plt.subplots_adjust(hspace=4)
+plt.show()
