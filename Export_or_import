@@ -1,0 +1,72 @@
+import pandas as pd
+from datetime import datetime
+import numpy as np
+import os
+from matplotlib import ticker
+import matplotlib.pyplot as plt
+from matplotlib import style
+import matplotlib.dates as mdates
+df0 = pd.read_csv(
+    'China.csv',
+    index_col=0,
+    encoding='utf-8')  # csv to dataframe
+df0 = df0.sort_values(by='Year')
+df0 = df0.set_index('Year')  # 将date设置为index
+df1 = pd.read_csv(
+    'VetNam.csv',
+    index_col=0,
+    encoding='utf-8')  # csv to dataframe
+df1 = df1.sort_values(by='Year')
+df1 = df1.set_index('Year')  # 将date设置为index
+print(df0)
+print(df1)
+#  绘图
+style.use('ggplot')
+plt.figure()  # 创建画布
+ax1 = plt.subplot2grid((4, 4), (0, 0), colspan=4, rowspan=2)
+ax2 = plt.subplot2grid((4, 4), (2, 0), colspan=4, rowspan=2)
+
+
+def draw(ax, DF, title, label, data, la, co1, co2):
+    ax.set_title(title)  # 标题描述
+    ax.set_xlabel(label)  # 横坐标描述
+    ax.set_ylabel('Trade_Value_(US$)', color=co1)  # 纵坐标描述
+    ax.plot(
+        DF.index,
+        DF[data],
+        label=la,
+        color=co2)
+    ax.legend()  # 图例
+
+
+draw(
+    ax1,
+    df0,
+    'China_Export',
+    'Year',
+    'Trade_Value_(US$)',
+    'China_Export',
+    'r',
+    'r')
+draw(
+    ax2,
+    df1,
+    'VetNam_import',
+    'Year',
+    'Trade_Value_(US$)',
+    'VetNam_import',
+    'green',
+    'b')
+
+
+def editx(ax):
+    for label in ax.get_xticklabels():
+        label.set_rotation(45)  # 旋转45度
+        label.set_horizontalalignment('right')  # 向右旋转
+        ax.xaxis.set_major_locator(mdates.DayLocator())
+
+
+editx(ax1)
+editx(ax2)
+plt.subplots_adjust(hspace=4)
+plt.show()
